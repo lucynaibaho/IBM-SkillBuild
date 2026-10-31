@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sales Dashboard 2023</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <script>
+    /* Tailwind custom config — extend default theme */
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#3b82d4',
+            secondary: '#7c5cd8',
+            accent:    '#10b981',
+            warn:      '#f59e0b',
+            danger:    '#ef4444',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-slate-100 text-slate-800 min-h-screen font-sans">
+
+  <!-- ========== TOP NAV ========== -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <!-- Logo icon -->
+        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <h1 class="text-lg font-semibold tracking-tight text-slate-800">Sales Dashboard <span class="text-primary">2023</span></h1>
+      </div>
+      <!-- Last updated badge -->
+      <span class="text-xs text-slate-400 hidden sm:block">Data: 200 Transaksi &bull; FY 2023</span>
+    </div>
+  </header>
+
+  <main class="max-w-screen-2xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+    <!-- ========== FILTER PANEL ========== -->
+    <section aria-label="Filter Panel" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+      <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-3">Filter Data</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="filterPanel">
+
+        <!-- Region Filter -->
+        <div class="flex flex-col gap-1">
+          <label for="filterRegion" class="text-xs font-medium text-slate-600">Region</label>
+          <select id="filterRegion" class="filter-select">
+            <option value="all">Semua Region</option>
+          </select>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="flex flex-col gap-1">
+          <label for="filterCategory" class="text-xs font-medium text-slate-600">Product Category</label>
+          <select id="filterCategory" class="filter-select">
+            <option value="all">Semua Kategori</option>
+          </select>
+        </div>
+
+        <!-- Customer Type Filter -->
+        <div class="flex flex-col gap-1">
+          <label for="filterCustomer" class="text-xs font-medium text-slate-600">Customer Type</label>
+          <select id="filterCustomer" class="filter-select">
+            <option value="all">Semua Tipe</option>
+          </select>
+        </div>
+
+        <!-- Sales Channel Filter -->
+        <div class="flex flex-col gap-1">
+          <label for="filterChannel" class="text-xs font-medium text-slate-600">Sales Channel</label>
+          <select id="filterChannel" class="filter-select">
+            <option value="all">Semua Channel</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Reset button -->
+      <div class="mt-3 flex justify-end">
+        <button id="btnReset"
+          class="text-xs px-4 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium transition-colors duration-200">
+          Reset Filter
+        </button>
+      </div>
+    </section>
+
+    <!-- ========== KPI CARDS ========== -->
+    <section aria-label="KPI Cards">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <div class="kpi-card border-l-4 border-primary">
+          <p class="kpi-label">Total Revenue</p>
+          <p class="kpi-value" id="kpiRevenue">—</p>
+          <p class="kpi-sub" id="kpiRevenueSub"></p>
+        </div>
+
+        <div class="kpi-card border-l-4 border-secondary">
+          <p class="kpi-label">Total Transaksi</p>
+          <p class="kpi-value" id="kpiTransactions">—</p>
+          <p class="kpi-sub" id="kpiTransactionsSub"></p>
+        </div>
+
+        <div class="kpi-card border-l-4 border-accent">
+          <p class="kpi-label">Total Qty Sold</p>
+          <p class="kpi-value" id="kpiQty">—</p>
+          <p class="kpi-sub" id="kpiQtySub"></p>
+        </div>
+
+        <div class="kpi-card border-l-4 border-warn">
+          <p class="kpi-label">Avg Discount</p>
+          <p class="kpi-value" id="kpiDiscount">—</p>
+          <p class="kpi-sub" id="kpiDiscountSub"></p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========== CHARTS ROW 1: Trend + Revenue per Region ========== -->
+    <section aria-label="Trend dan Region" class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="chart-card lg:col-span-2">
+        <h3 class="chart-title">Sales Trend (Bulanan)</h3>
+        <div class="chart-wrapper">
+          <canvas id="chartTrend"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3 class="chart-title">Revenue per Region</h3>
+        <div class="chart-wrapper">
+          <canvas id="chartRegion"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CHARTS ROW 2: Category + Sales Rep ========== -->
+    <section aria-label="Kategori dan Sales Rep" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="chart-card">
+        <h3 class="chart-title">Revenue per Product Category</h3>
+        <div class="chart-wrapper">
+          <canvas id="chartCategory"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3 class="chart-title">Sales per Sales Representative</h3>
+        <div class="chart-wrapper">
+          <canvas id="chartRep"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CHARTS ROW 3: Customer Type + Payment + Channel ========== -->
+    <section aria-label="Distribusi" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="chart-card">
+        <h3 class="chart-title">Customer Type Distribution</h3>
+        <div class="chart-wrapper-sm">
+          <canvas id="chartCustomer"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3 class="chart-title">Payment Method Usage</h3>
+        <div class="chart-wrapper-sm">
+          <canvas id="chartPayment"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3 class="chart-title">Sales Channel Distribution</h3>
+        <div class="chart-wrapper-sm">
+          <canvas id="chartChannel"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CHARTS ROW 4: Scatter + Top 10 + Qty per Category ========== -->
+    <section aria-label="Analisis Lanjutan" class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="chart-card">
+        <h3 class="chart-title">Discount vs Sales Amount</h3>
+        <div class="chart-wrapper">
+          <canvas id="chartScatter"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3 class="chart-title">Top 10 Highest Sales</h3>
+        <div class="chart-wrapper">
+          <canvas id="chartTop10"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3 class="chart-title">Quantity Sold per Category</h3>
+        <div class="chart-wrapper">
+          <canvas id="chartQtyCategory"></canvas>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="text-center text-xs text-slate-400 py-6 border-t border-slate-200 mt-4">
+    Sales Dashboard 2023 &mdash; Built with HTML, Tailwind CSS &amp; Chart.js
+  </footer>
+
+  <!-- Load main script -->
+  <script src="script.js"></script>
+</body>
+</html>

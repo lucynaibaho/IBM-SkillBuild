@@ -1,0 +1,140 @@
+/*
+ * style.css — Sales Dashboard 2023
+ * Styling tambahan yang tidak mudah diekspresikan via utility Tailwind.
+ * Semua class utama tetap di Tailwind; file ini hanya suplemen.
+ */
+
+/* ─────────────────────────────────────────────────────────────
+   CUSTOM SCROLLBAR (Webkit)
+───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ─────────────────────────────────────────────────────────────
+   FILTER SELECT
+   Dropdown filter dengan gaya konsisten dan focus ring
+───────────────────────────────────────────────────────────── */
+.filter-select {
+  width: 100%;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  background-color: #f8fafc;
+  font-size: 0.8125rem;
+  color: #334155;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  appearance: none;
+  /* Custom chevron arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2394a3b8'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1.125rem;
+  padding-right: 2rem;
+}
+.filter-select:focus {
+  border-color: #3b82d4;
+  box-shadow: 0 0 0 3px rgba(59,130,212,0.15);
+  background-color: #fff;
+}
+.filter-select:hover { border-color: #94a3b8; }
+
+/* ─────────────────────────────────────────────────────────────
+   KPI CARD
+───────────────────────────────────────────────────────────── */
+.kpi-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  border: 1px solid #f1f5f9;
+  /* border-l-4 warna diterapkan dari HTML via Tailwind */
+}
+.kpi-card:hover {
+  box-shadow: 0 4px 12px rgba(15,23,42,0.1);
+  transform: translateY(-2px);
+}
+.kpi-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 0.4rem;
+}
+.kpi-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+.kpi-sub {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CHART CARD
+───────────────────────────────────────────────────────────── */
+.chart-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem 1rem;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+  border: 1px solid #f1f5f9;
+  transition: box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+.chart-card:hover {
+  box-shadow: 0 4px 16px rgba(15,23,42,0.09);
+}
+.chart-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 1rem;
+  letter-spacing: 0.01em;
+}
+
+/* Wrapper untuk chart normal — tinggi 260px */
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  flex: 1;
+}
+
+/* Wrapper untuk chart kecil (pie/donut distribusi) — tinggi 220px */
+.chart-wrapper-sm {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  flex: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE — Mobile tweaks
+───────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .kpi-value     { font-size: 1.4rem; }
+  .chart-wrapper { height: 220px; }
+  .chart-wrapper-sm { height: 200px; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SMOOTH PAGE LOAD — fade in seluruh main content
+───────────────────────────────────────────────────────────── */
+main {
+  animation: fadeInUp 0.4s ease both;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
